@@ -1,0 +1,50 @@
+{% include "_stats.html" %}
+<div id="card">
+{% if not card %}
+  <div class="empty">
+    <h2>Queue empty</h2>
+    <p>Capture more leads, then run Ingest and Generate.</p>
+  </div>
+{% else %}
+  {% set lead = card.lead %}
+  {% set draft = card.draft %}
+  <article class="card" data-lead="{{ lead.id }}"
+           data-url="{{ lead.profile_url }}">
+    <header>
+      <h2>{{ lead.name }}</h2>
+      <p class="headline">{{ lead.headline or "—" }}</p>
+      <p class="meta">
+        {% if lead.company %}<span>{{ lead.company }}</span>{% endif %}
+        {% if lead.location %}<span>{{ lead.location }}</span>{% endif %}
+        <a href="{{ lead.profile_url }}" target="_blank" rel="noopener">profile ↗</a>
+      </p>
+    </header>
+
+    {% if card.job %}
+      <p class="job">Citing: <a href="{{ card.job.url }}" target="_blank"
+         rel="noopener">{{ card.job.title }}</a>
+         {% if card.job.location %}<span>· {{ card.job.location }}</span>{% endif %}</p>
+    {% else %}
+      <p class="job none">No public posting matched — written from title alone.</p>
+    {% endif %}
+
+    <label>Connection note
+      <span class="count" id="count">{{ draft.note|length }}/280</span></label>
+    <textarea id="note" rows="4" maxlength="300">{{ draft.note }}</textarea>
+
+    <label>Follow-up message</label>
+    <textarea id="message" rows="7">{{ draft.message }}</textarea>
+
+    <div class="actions">
+      <button class="primary" onclick="decide('sent')">Copy &amp; send <kbd>a</kbd></button>
+      <button onclick="decide('approved')">Queue <kbd>w</kbd></button>
+      <button onclick="decide('skipped')">Skip <kbd>s</kbd></button>
+      <button class="danger" onclick="decide('rejected')">Reject <kbd>x</kbd></button>
+    </div>
+    <p class="hint">
+      <b>Copy &amp; send</b> copies the note, opens the profile, and marks it sent.
+      Edit either field first — your edit is what gets saved.
+    </p>
+  </article>
+{% endif %}
+</div>

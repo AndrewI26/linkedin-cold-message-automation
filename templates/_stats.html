@@ -1,0 +1,11 @@
+<div id="stats" class="stats">
+  <span><b>{{ stats.counts.pending }}</b> pending</span>
+  <span><b>{{ stats.counts.sent }}</b> sent</span>
+  <span><b>{{ stats.counts.approved }}</b> queued</span>
+  <span><b>{{ stats.counts.skipped + stats.counts.rejected }}</b> passed</span>
+  <span class="sep"></span>
+  <span>{{ stats.leads }} leads · {{ stats.jobs }} jobs</span>
+  <span class="budget {% if stats.sent_week >= stats.budget %}over{% endif %}">
+    {{ stats.sent_week }} / {{ stats.budget }} this week
+  </span>
+</div>

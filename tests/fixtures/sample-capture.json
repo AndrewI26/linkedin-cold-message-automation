@@ -1,0 +1,4 @@
+[{"name":"Jane Doe","headline":"Technical Recruiter at Stripe | Hiring Infra Engineers","company":"Stripe","location":"San Francisco Bay Area","profile_url":"https://www.linkedin.com/in/jane-doe-12345","raw_lines":["Jane Doe","Technical Recruiter at Stripe | Hiring Infra Engineers","San Francisco Bay Area"],"captured_from":"fixture"},
+{"name":"Marcus Webb","headline":"Engineering Manager, Platform @ Shopify","company":"Shopify","location":"Toronto, Ontario, Canada","profile_url":"https://www.linkedin.com/in/marcus-webb","raw_lines":["Marcus Webb","Engineering Manager, Platform @ Shopify","Toronto, Ontario, Canada"],"captured_from":"fixture"},
+{"name":"Sparse Person","profile_url":"https://www.linkedin.com/in/marcus-webb?trk=x"},
+{"name":"No URL Person","headline":"Recruiter"}]

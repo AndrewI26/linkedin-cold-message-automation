@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lcm review</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfbfc; --fg: #16181d; --muted: #6b7280; --line: #e3e5e9;
+    --card: #fff; --accent: #0a66c2; --danger: #b42318; --ok: #067647;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #101215; --fg: #e9eaee; --muted: #9aa1ad; --line: #272b33;
+      --card: #171a1f; --accent: #4d9fe8; --danger: #f07a70; --ok: #5fd3a0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 15px/1.55 -apple-system, system-ui, sans-serif; }
+  .wrap { max-width: 44rem; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  h1 { font-size: 1.05rem; margin: 0; letter-spacing: .02em; }
+  .top { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+         margin-bottom: 1rem; }
+  .pipeline { margin-left: auto; display: flex; gap: .4rem; }
+  .pipeline button { font-size: .8rem; padding: .3rem .7rem; }
+  .stats { display: flex; gap: .9rem; flex-wrap: wrap; font-size: .82rem;
+           color: var(--muted); padding: .6rem 0 1rem; border-bottom: 1px solid var(--line);
+           margin-bottom: 1.25rem; align-items: center; }
+  .stats b { color: var(--fg); }
+  .sep { flex: 1; }
+  .budget.over { color: var(--danger); font-weight: 600; }
+  .card { background: var(--card); border: 1px solid var(--line);
+          border-radius: 12px; padding: 1.25rem 1.35rem 1.35rem; }
+  .card h2 { margin: 0 0 .15rem; font-size: 1.3rem; }
+  .headline { margin: 0 0 .5rem; color: var(--fg); }
+  .meta { margin: 0 0 1rem; font-size: .84rem; color: var(--muted);
+          display: flex; gap: .7rem; flex-wrap: wrap; }
+  .meta a { color: var(--accent); }
+  .job { font-size: .86rem; background: rgba(10,102,194,.09);
+         border-left: 3px solid var(--accent); padding: .5rem .75rem;
+         border-radius: 0 6px 6px 0; margin: 0 0 1.1rem; }
+  .job.none { background: transparent; border-left-color: var(--line);
+              color: var(--muted); }
+  .job a { color: inherit; }
+  label { display: flex; justify-content: space-between; align-items: baseline;
+          font-size: .78rem; text-transform: uppercase; letter-spacing: .06em;
+          color: var(--muted); margin: 0 0 .35rem; }
+  .count.over { color: var(--danger); font-weight: 700; }
+  textarea { width: 100%; background: var(--bg); color: var(--fg);
+             border: 1px solid var(--line); border-radius: 8px; padding: .7rem .8rem;
+             font: inherit; resize: vertical; margin-bottom: 1rem; }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+  button { background: var(--card); color: var(--fg); border: 1px solid var(--line);
+           border-radius: 8px; padding: .5rem .9rem; font: inherit; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.danger:hover { border-color: var(--danger); color: var(--danger); }
+  kbd { font: 11px ui-monospace, monospace; opacity: .7; border: 1px solid currentColor;
+        border-radius: 4px; padding: 0 .25rem; margin-left: .35rem; }
+  .hint, .log { font-size: .8rem; color: var(--muted); }
+  .hint { margin: 1rem 0 0; }
+  .log { margin-top: 1.5rem; font-family: ui-monospace, monospace; }
+  .empty { text-align: center; padding: 4rem 1rem; color: var(--muted); }
+  .empty h2 { color: var(--fg); }
+  .toast { position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
+           background: var(--fg); color: var(--bg); padding: .55rem 1rem;
+           border-radius: 8px; font-size: .85rem; opacity: 0;
+           transition: opacity .18s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>lcm review</h1>
+    <div class="pipeline">
+      <button onclick="pipeline('ingest')">Ingest</button>
+      <button onclick="pipeline('enrich')">Enrich</button>
+      <button onclick="pipeline('generate')">Generate</button>
+    </div>
+  </div>
+
+  <div id="slot">{% include "_card.html" %}</div>
+  {% include "_log.html" %}
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function () { t.classList.remove('show'); }, 1600);
+}
+
+function card() { return document.querySelector('.card'); }
+
+function updateCount() {
+  var note = document.getElementById('note');
+  var count = document.getElementById('count');
+  if (!note || !count) return;
+  count.textContent = note.value.length + '/280';
+  count.classList.toggle('over', note.value.length > 280);
+}
+
+async function decide(status) {
+  var el = card();
+  if (!el) return;
+  var note = document.getElementById('note').value.trim();
+
+  if (status === 'sent' || status === 'approved') {
+    try { await navigator.clipboard.writeText(note); } catch (e) { /* denied */ }
+  }
+  if (status === 'sent') {
+    window.open(el.dataset.url, '_blank', 'noopener');
+  }
+
+  var body = new URLSearchParams({ status: status, final_text: note });
+  var res = await fetch('/outreach/' + el.dataset.lead, { method: 'POST', body: body });
+  if (!res.ok) { toast('Failed: ' + res.status); return; }
+
+  document.getElementById('slot').innerHTML = await res.text();
+  updateCount();
+  toast({ sent: 'Copied — profile opened', approved: 'Copied and queued',
+          skipped: 'Skipped', rejected: 'Rejected' }[status]);
+}
+
+async function pipeline(step) {
+  toast(step + ' started');
+  await fetch('/pipeline/' + step, { method: 'POST' });
+  // The step runs in the background; poll once it has had a moment to finish.
+  setTimeout(refresh, 2500);
+}
+
+async function refresh() {
+  document.getElementById('slot').innerHTML = await (await fetch('/card')).text();
+  document.getElementById('log').outerHTML = await (await fetch('/log')).text();
+  updateCount();
+}
+
+document.addEventListener('input', function (e) {
+  if (e.target.id === 'note') updateCount();
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  var typing = /^(TEXTAREA|INPUT)$/.test(document.activeElement.tagName);
+  if (e.key === 'Escape' && typing) { document.activeElement.blur(); return; }
+  if (typing) return;
+  var map = { a: 'sent', w: 'approved', s: 'skipped', x: 'rejected' };
+  if (map[e.key]) { e.preventDefault(); decide(map[e.key]); }
+  if (e.key === 'e') {
+    e.preventDefault();
+    var note = document.getElementById('note');
+    if (note) { note.focus(); note.setSelectionRange(note.value.length, note.value.length); }
+  }
+});
+
+updateCount();
+</script>
+</body>
+</html>

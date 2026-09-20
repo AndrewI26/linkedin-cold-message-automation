@@ -1,0 +1,70 @@
+# Drafted from your resume by `lcm extract`. Correct anything wrong — this
+# steers every message, and you are the authority on it.
+
+name: Andrew Iammancini
+
+# One line the model uses to introduce you.
+positioning: >-
+  Second-year Computer Science student at the University of Waterloo (graduating
+  April 2028, 3.91 GPA) with three full-stack co-op terms shipping production
+  React, TypeScript, FastAPI and Express systems.
+
+# What you are actually asking for. Be specific; vagueness produces vague messages.
+seeking: Software engineering co-op / internship terms
+
+# Used to rank which of a company's open roles is worth citing.
+job_match:
+  prefer:
+    - intern
+    - internship
+    - co-op
+    - coop
+    - new grad
+    - university
+    - student
+    - early career
+  include:
+    - software engineer
+    - full stack
+    - fullstack
+    - backend
+    - frontend
+    - web
+    - platform
+    - infrastructure
+    - developer
+  exclude:
+    - manager
+    - director
+    - principal
+    - staff
+    - senior
+    - lead
+    - vp
+    - head of
+    - sales
+    - recruiter
+    - marketing
+    - counsel
+    - accountant
+
+# The three things worth leading with. The model picks whichever fits the role.
+strengths:
+  - Shipped an analytics dashboard aggregating social metrics across 17 radio
+    stations — 1000+ posts and 300,000+ views at sub-2-second response times
+    (Express.js, MongoDB, OpenSearch).
+  - Sole developer of a full-stack clinician portal for electronic-insole patient
+    data (React Router, Vite, FastAPI), including a drag-and-drop report builder
+    and PDF export.
+  - Founder of CampusCart, a student marketplace serving 1000 monthly visitors,
+    deployed on AWS EC2 with Docker and NGINX.
+
+links:
+  github: https://github.com/AndrewI26
+  portfolio: null   # fill in if you want it cited
+  linkedin: null
+
+# Tone rules handed to the model verbatim.
+tone: >-
+  Direct and concrete. Short sentences. Sound like a competent student who did
+  the reading, not like a form letter. Never flatter the recipient.
