@@ -7,7 +7,7 @@ from pathlib import Path
 
 import typer
 
-from . import config, db, resume as resume_mod
+from . import bookmarklet, config, db, resume as resume_mod
 
 app = typer.Typer(
     add_completion=False,
@@ -123,6 +123,23 @@ def extract(
         "\nRead it and fix anything the PDF extractor mangled — this text is the"
         "\nfoundation for every message."
     )
+
+
+@app.command()
+def capture(
+    open_browser: bool = typer.Option(
+        True, "--open/--no-open", help="Open the install page in your browser."
+    ),
+) -> None:
+    """Build the capture bookmarklet and show the install instructions."""
+    page = bookmarklet.build()
+    typer.secho(f"Built {page}", fg=typer.colors.GREEN)
+    if open_browser:
+        import webbrowser
+
+        webbrowser.open(page.as_uri())
+    else:
+        typer.echo(f"Open: {page.as_uri()}")
 
 
 @app.command()
