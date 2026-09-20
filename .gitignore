@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+data/leads.db
+data/inbox/*.json
+data/resumes/*.md
+config.toml
